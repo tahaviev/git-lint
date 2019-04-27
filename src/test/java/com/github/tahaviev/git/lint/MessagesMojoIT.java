@@ -70,85 +70,45 @@ public final class MessagesMojoIT {
     @BeforeAll
     @SneakyThrows
     public static void setUpCommits() {
-        final Runtime runtime = Runtime.getRuntime();
-        runtime
-            .exec(new String[]{"git", "init"}, null, MessagesMojoIT.directory)
-            .waitFor();
-        runtime
-            .exec(
-                new String[]{"git", "config", "user.email", "\"user.email\""},
-                null,
-                MessagesMojoIT.directory
-            )
-            .waitFor();
-        runtime
-            .exec(
-                new String[]{"git", "config", "user.name", "\"user.name\""},
-                null,
-                MessagesMojoIT.directory
-            )
-            .waitFor();
-        runtime
-            .exec(
-                new String[]{"git", "checkout", "-b", "master"},
-                null,
-                MessagesMojoIT.directory
-            )
-            .waitFor();
+        new Executions(
+            new String[][]{
+                {"git", "init"},
+                {"git", "config", "user.email", "\"user.email\""},
+                {"git", "config", "user.name", "\"user.name\""}
+            },
+            MessagesMojoIT.directory
+        )
+            .run();
         final Path file = Files.createFile(
             MessagesMojoIT.directory.toPath().resolve("test.txt")
         );
-        runtime
-            .exec(
-                new String[]{"git", "add", file.getFileName().toString()},
-                null,
-                MessagesMojoIT.directory
-            )
-            .waitFor();
-        runtime
-            .exec(
-                new String[]{"git", "commit", "-m", "file"},
-                null,
-                MessagesMojoIT.directory
-            )
-            .waitFor();
-        runtime
-            .exec(
-                new String[]{"git", "checkout", "-b", "branch"},
-                null,
-                MessagesMojoIT.directory
-            )
-            .waitFor();
+        new Executions(
+            new String[][]{
+                {"git", "add", file.getFileName().toString()},
+                {"git", "commit", "-m", "file"},
+                {"git", "checkout", "-b", "branch"}
+            },
+            MessagesMojoIT.directory
+        )
+            .run();
         Files.write(file, "first".getBytes());
-        runtime
-            .exec(
-                new String[]{"git", "add", file.getFileName().toString()},
-                null,
-                MessagesMojoIT.directory
-            )
-            .waitFor();
-        runtime
-            .exec(
-                new String[]{"git", "commit", "-m", "#123"},
-                null,
-                MessagesMojoIT.directory
-            )
-            .waitFor();
+        new Executions(
+            new String[][]{
+                {"git", "add", file.getFileName().toString()},
+                {"git", "commit", "-m", "#123"}
+            },
+            MessagesMojoIT.directory
+        )
+            .run();
         Files.write(file, "second".getBytes());
-        runtime
-            .exec(
-                new String[]{"git", "add", file.getFileName().toString()},
-                null,
-                MessagesMojoIT.directory
-            )
-            .waitFor();
-        runtime
-            .exec(
-                new String[]{"git", "commit", "-m", "#test"},
-                null,
-                MessagesMojoIT.directory
-            )
-            .waitFor();
+        new Executions(
+            new String[][]{
+                {"git", "add", file.getFileName().toString()},
+                {"git", "commit", "-m", "#test"}
+            },
+            MessagesMojoIT.directory
+        )
+            .run();
     }
 
     /**
