@@ -23,50 +23,47 @@
  */
 package com.github.tahaviev.git.lint;
 
-import java.io.ByteArrayInputStream;
-import java.io.ByteArrayOutputStream;
-import java.io.InputStream;
-import java.io.OutputStream;
-import lombok.RequiredArgsConstructor;
+import java.io.IOException;
+import lombok.SneakyThrows;
+import org.hamcrest.MatcherAssert;
+import org.hamcrest.Matchers;
+import org.junit.jupiter.api.Assertions;
+import org.junit.jupiter.api.Test;
 
 /**
- * Represents fake process.
+ * {@link SucceedProcess} test.
  */
-@RequiredArgsConstructor
-public final class FakeProcess extends Process {
+public final class SucceedProcessTest {
 
     /**
-     * Process result.
+     * Can be successfully completed.
      */
-    private final String input;
-
-    @Override
-    public OutputStream getOutputStream() {
-        return new ByteArrayOutputStream();
+    @SneakyThrows
+    @Test
+    public void succeedOnSuccessProcess() {
+        MatcherAssert.assertThat(
+            new SucceedProcess(
+                () -> new FakeSucceedProcess("success")
+            )
+                .get()
+                .waitFor(),
+            Matchers.equalTo(0)
+        );
     }
 
-    @Override
-    public InputStream getInputStream() {
-        return new ByteArrayInputStream(this.input.getBytes());
-    }
-
-    @Override
-    public InputStream getErrorStream() {
-        return new ByteArrayInputStream(new byte[] {});
-    }
-
-    @Override
-    public int waitFor() {
-        return 0;
-    }
-
-    @Override
-    public int exitValue() {
-        return 0;
-    }
-
-    @Override
-    public void destroy() {
+    /**
+     * Can throw exception on fail process.
+     */
+    @Test
+    public void throwException() {
+        Assertions.assertThrows(
+            IOException.class,
+            () -> new SucceedProcess(
+                () -> new FakeFailedProcess("error")
+            )
+                .get()
+                .waitFor()
+        );
     }
 
 }

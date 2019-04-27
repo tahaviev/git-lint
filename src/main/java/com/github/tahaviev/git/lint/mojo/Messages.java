@@ -26,6 +26,7 @@ package com.github.tahaviev.git.lint.mojo;
 
 import com.github.tahaviev.git.lint.LinesFromProcess;
 import com.github.tahaviev.git.lint.Mismatches;
+import com.github.tahaviev.git.lint.SucceedProcess;
 import java.util.Collection;
 import java.util.function.Supplier;
 import lombok.RequiredArgsConstructor;
@@ -68,7 +69,9 @@ public final class Messages extends AbstractMojo {
     public void execute() throws MojoFailureException {
         final Collection<String> mismatches = new Mismatches(
             new LinesFromProcess(
-                new Messages.Processes(this.directory, this.remote)
+                new SucceedProcess(
+                    new Messages.Processes(this.directory, this.remote)
+                )
             ),
             this.pattern
         )
