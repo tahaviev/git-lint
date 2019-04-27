@@ -23,56 +23,43 @@
  */
 package com.github.tahaviev.git.lint;
 
+import java.io.BufferedReader;
 import java.io.IOException;
-import java.util.Arrays;
-import java.util.Collection;
+import java.io.InputStreamReader;
 import java.util.function.Supplier;
+import java.util.stream.Collectors;
+import lombok.RequiredArgsConstructor;
 import lombok.SneakyThrows;
-import org.hamcrest.MatcherAssert;
-import org.hamcrest.Matchers;
-import org.junit.jupiter.api.Assertions;
-import org.junit.jupiter.api.Test;
 
 /**
- * {@link LinesFromProcess} test.
+ * Represents succeed process.
  */
-public final class LinesFromProcessTest {
+@RequiredArgsConstructor
+public final class SucceedProcess implements Supplier<Process> {
 
     /**
-     * Can read lines.
+     * Target process.
      */
-    @Test
-    public void readLines() {
-        final Collection<String> lines = Arrays.asList(
-            "first", "second"
-        );
-        MatcherAssert.assertThat(
-            new LinesFromProcess(
-                () -> new FakeSucceedProcess(String.join("\n", lines))
-            )
-                .get(),
-            Matchers.equalTo(lines)
-        );
-    }
+    private final Supplier<Process> target;
 
-    /**
-     * Can throw I/O exception.
-     */
-    @Test
-    public void throwException() {
-        Assertions.assertThrows(
-            IOException.class,
-            () -> new LinesFromProcess(
-                new Supplier<Process>() {
-
-                    @Override
-                    @SneakyThrows
-                    public Process get() {
-                        throw new IOException("test");
-                    }
-                }
-            ).get()
-        );
+    @Override
+    @SneakyThrows
+    public Process get() {
+        final Process process = this.target.get();
+        if (process.waitFor() != 0) {
+            final String message;
+            try (
+                BufferedReader reader = new BufferedReader(
+                    new InputStreamReader(
+                        process.getErrorStream()
+                    )
+                )
+            ) {
+                message = reader.lines().collect(Collectors.joining("\n"));
+            }
+            throw new IOException(message);
+        }
+        return process;
     }
 
 }
