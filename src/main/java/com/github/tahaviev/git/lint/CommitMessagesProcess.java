@@ -21,7 +21,45 @@
  * OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE
  * SOFTWARE.
  */
+package com.github.tahaviev.git.lint;
+
+import java.io.File;
+import java.util.function.Supplier;
+import lombok.RequiredArgsConstructor;
+import lombok.SneakyThrows;
+
 /**
- * Contains git lint integration test classes.
+ * Represents commit messages process.
  */
-package com.github.tahaviev.git.lint.mojo;
+@RequiredArgsConstructor
+final class CommitMessagesProcess implements Supplier<Process> {
+
+    /**
+     * Git repository directory.
+     */
+    private final String directory;
+
+    /**
+     * Remote branch name.
+     */
+    private final String remote;
+
+    @Override
+    @SneakyThrows
+    public Process get() {
+        return Runtime.getRuntime().exec(
+            new String[]{
+                "git",
+                "log",
+                "--abbrev-commit",
+                "--first-parent",
+                "--format=\"%s\"",
+                "--no-merges",
+                String.format("%s..HEAD", this.remote)
+            },
+            null,
+            new File(this.directory)
+        );
+    }
+
+}

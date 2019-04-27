@@ -21,7 +21,7 @@
  * OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE
  * SOFTWARE.
  */
-package com.github.tahaviev.git.lint.mojo;
+package com.github.tahaviev.git.lint;
 
 import java.io.File;
 import java.io.IOException;
@@ -41,27 +41,27 @@ import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.io.TempDir;
 
 /**
- * {@link Messages} integration test.
+ * {@link MessagesMojo} integration test.
  */
-public final class MessagesIT {
+public final class MessagesMojoIT {
 
     /**
      * Git directory.
      */
-    private static File DIRECTORY;
+    private static File directory;
 
     /**
-     * {@link Messages} instance to test.
+     * {@link MessagesMojo} instance to test.
      */
-    private Messages messages;
+    private MessagesMojo mojo;
 
     /**
-     * Creates {@link MessagesIT#DIRECTORY}.
+     * Creates {@link MessagesMojoIT#directory}.
      */
     @BeforeAll
     @SneakyThrows
     public static void setUpDirectory() {
-        MessagesIT.DIRECTORY = Files.createTempDirectory("junit").toFile();
+        MessagesMojoIT.directory = Files.createTempDirectory("junit").toFile();
     }
 
     /**
@@ -72,49 +72,51 @@ public final class MessagesIT {
     public static void setUpCommits() {
         final Runtime runtime = Runtime.getRuntime();
         runtime
-            .exec(new String[]{"git", "init"}, null, MessagesIT.DIRECTORY)
+            .exec(new String[]{"git", "init"}, null, MessagesMojoIT.directory)
             .waitFor();
         runtime
             .exec(
                 new String[]{"git", "config", "user.email", "\"user.email\""},
                 null,
-                MessagesIT.DIRECTORY
+                MessagesMojoIT.directory
             )
             .waitFor();
         runtime
             .exec(
                 new String[]{"git", "config", "user.name", "\"user.name\""},
                 null,
-                MessagesIT.DIRECTORY
+                MessagesMojoIT.directory
             )
             .waitFor();
         runtime
             .exec(
                 new String[]{"git", "checkout", "-b", "master"},
                 null,
-                MessagesIT.DIRECTORY
+                MessagesMojoIT.directory
             )
             .waitFor();
         final Path file = Files.createFile(
-            MessagesIT.DIRECTORY.toPath().resolve("test.txt")
+            MessagesMojoIT.directory.toPath().resolve("test.txt")
         );
         runtime
             .exec(
                 new String[]{"git", "add", file.getFileName().toString()},
                 null,
-                MessagesIT.DIRECTORY
+                MessagesMojoIT.directory
             )
             .waitFor();
         runtime
-            .exec(new String[]{"git", "commit", "-m", "file"}, null,
-                MessagesIT.DIRECTORY
+            .exec(
+                new String[]{"git", "commit", "-m", "file"},
+                null,
+                MessagesMojoIT.directory
             )
             .waitFor();
         runtime
             .exec(
                 new String[]{"git", "checkout", "-b", "branch"},
                 null,
-                MessagesIT.DIRECTORY
+                MessagesMojoIT.directory
             )
             .waitFor();
         Files.write(file, "first".getBytes());
@@ -122,12 +124,14 @@ public final class MessagesIT {
             .exec(
                 new String[]{"git", "add", file.getFileName().toString()},
                 null,
-                MessagesIT.DIRECTORY
+                MessagesMojoIT.directory
             )
             .waitFor();
         runtime
-            .exec(new String[]{"git", "commit", "-m", "#123"}, null,
-                MessagesIT.DIRECTORY
+            .exec(
+                new String[]{"git", "commit", "-m", "#123"},
+                null,
+                MessagesMojoIT.directory
             )
             .waitFor();
         Files.write(file, "second".getBytes());
@@ -135,24 +139,28 @@ public final class MessagesIT {
             .exec(
                 new String[]{"git", "add", file.getFileName().toString()},
                 null,
-                MessagesIT.DIRECTORY
+                MessagesMojoIT.directory
             )
             .waitFor();
         runtime
-            .exec(new String[]{"git", "commit", "-m", "#test"}, null,
-                MessagesIT.DIRECTORY
+            .exec(
+                new String[]{"git", "commit", "-m", "#test"},
+                null,
+                MessagesMojoIT.directory
             )
             .waitFor();
     }
 
     /**
-     * Deletes {@link MessagesIT#DIRECTORY}.
+     * Deletes {@link MessagesMojoIT#directory}.
      */
     @AfterAll
     @SneakyThrows
     public static void tearDownDirectory() {
         final boolean fail;
-        try (Stream<Path> files = Files.walk(MessagesIT.DIRECTORY.toPath())) {
+        try (
+            Stream<Path> files = Files.walk(MessagesMojoIT.directory.toPath())
+        ) {
             fail = !files
                 .sorted(Comparator.reverseOrder())
                 .map(Path::toFile)
@@ -160,19 +168,19 @@ public final class MessagesIT {
         }
         if (fail) {
             throw new IOException(
-                String.format("can't delete %s", MessagesIT.DIRECTORY)
+                String.format("can't delete %s", MessagesMojoIT.directory)
             );
         }
     }
 
     /**
-     * Creates {@link Messages} instance.
+     * Creates {@link MessagesMojo} instance.
      */
     @BeforeEach
-    public void setUpMessages() {
-        this.messages = new Messages();
-        this.messages.setDirectory(MessagesIT.DIRECTORY.toString());
-        this.messages.setRemote("master");
+    public void setUpMojo() {
+        this.mojo = new MessagesMojo();
+        this.mojo.setDirectory(MessagesMojoIT.directory.toString());
+        this.mojo.setRemote("master");
     }
 
     /**
@@ -180,8 +188,8 @@ public final class MessagesIT {
      */
     @Test
     public void acceptGoodCommits() {
-        this.messages.setPattern("#.+");
-        Assertions.assertDoesNotThrow(this.messages::execute);
+        this.mojo.setPattern("#.+");
+        Assertions.assertDoesNotThrow(this.mojo::execute);
     }
 
     /**
@@ -189,9 +197,9 @@ public final class MessagesIT {
      */
     @Test
     public void rejectWrongCommits() {
-        this.messages.setPattern("#(\\d)+");
+        this.mojo.setPattern("#(\\d)+");
         try {
-            this.messages.execute();
+            this.mojo.execute();
             Assertions.fail("no exception was thrown");
         } catch (final MojoFailureException ex) {
             MatcherAssert.assertThat(
@@ -213,10 +221,10 @@ public final class MessagesIT {
      */
     @Test
     public void throwExceptionOnInvalidInput(@TempDir final Path temp) {
-        this.messages.setDirectory(temp.resolve("nonexistent").toString());
+        this.mojo.setDirectory(temp.resolve("nonexistent").toString());
         Assertions.assertThrows(
             IOException.class,
-            this.messages::execute
+            this.mojo::execute
         );
     }
 
