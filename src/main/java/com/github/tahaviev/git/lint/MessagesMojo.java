@@ -20,19 +20,11 @@
  * LIABILITY, WHETHER IN AN ACTION OF CONTRACT, TORT OR OTHERWISE, ARISING FROM,
  * OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE
  * SOFTWARE.
- *
  */
-package com.github.tahaviev.git.lint.mojo;
+package com.github.tahaviev.git.lint;
 
-import com.github.tahaviev.git.lint.LinesFromProcess;
-import com.github.tahaviev.git.lint.Mismatches;
-import com.github.tahaviev.git.lint.SucceedProcess;
-import java.io.File;
 import java.util.Collection;
-import java.util.function.Supplier;
-import lombok.RequiredArgsConstructor;
 import lombok.Setter;
-import lombok.SneakyThrows;
 import org.apache.maven.plugin.AbstractMojo;
 import org.apache.maven.plugin.MojoFailureException;
 import org.apache.maven.plugins.annotations.LifecyclePhase;
@@ -48,7 +40,7 @@ import org.apache.maven.plugins.annotations.Parameter;
     requiresProject = false
 )
 @Setter
-public final class Messages extends AbstractMojo {
+public final class MessagesMojo extends AbstractMojo {
 
     /**
      * Git repository directory.
@@ -73,7 +65,7 @@ public final class Messages extends AbstractMojo {
         final Collection<String> mismatches = new Mismatches(
             new LinesFromProcess(
                 new SucceedProcess(
-                    new Messages.Processes(this.directory, this.remote)
+                    new CommitMessagesProcess(this.directory, this.remote)
                 )
             ),
             this.pattern
@@ -88,42 +80,6 @@ public final class Messages extends AbstractMojo {
                 )
             );
         }
-    }
-
-    /**
-     * Represents commit messages process.
-     */
-    @RequiredArgsConstructor
-    private static final class Processes implements Supplier<Process> {
-
-        /**
-         * Git repository directory.
-         */
-        private final String directory;
-
-        /**
-         * Remote branch name.
-         */
-        private final String remote;
-
-        @Override
-        @SneakyThrows
-        public Process get() {
-            return Runtime.getRuntime().exec(
-                new String[]{
-                    "git",
-                    "log",
-                    "--abbrev-commit",
-                    "--first-parent",
-                    "--format=\"%s\"",
-                    "--no-merges",
-                    String.format("%s..HEAD", this.remote)
-                },
-                null,
-                new File(this.directory)
-            );
-        }
-
     }
 
 }
