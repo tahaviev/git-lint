@@ -91,6 +91,18 @@
                 </configuration>
             </plugin>
             <plugin>
+                <artifactId>maven-failsafe-plugin</artifactId>
+                <version>3.0.0-M3</version>
+                <executions>
+                    <execution>
+                        <goals>
+                            <goal>integration-test</goal>
+                            <goal>verify</goal>
+                        </goals>
+                    </execution>
+                </executions>
+            </plugin>
+            <plugin>
                 <artifactId>maven-plugin-plugin</artifactId>
                 <version>3.6.0</version>
                 <configuration>
@@ -143,7 +155,6 @@
                             <goal>check</goal>
                         </goals>
                         <configuration>
-                            <excludes>**/mojo/*</excludes>
                             <rules>
                                 <rule>
                                     <limits>

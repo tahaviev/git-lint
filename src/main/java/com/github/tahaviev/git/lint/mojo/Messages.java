@@ -27,9 +27,11 @@ package com.github.tahaviev.git.lint.mojo;
 import com.github.tahaviev.git.lint.LinesFromProcess;
 import com.github.tahaviev.git.lint.Mismatches;
 import com.github.tahaviev.git.lint.SucceedProcess;
+import java.io.File;
 import java.util.Collection;
 import java.util.function.Supplier;
 import lombok.RequiredArgsConstructor;
+import lombok.Setter;
 import lombok.SneakyThrows;
 import org.apache.maven.plugin.AbstractMojo;
 import org.apache.maven.plugin.MojoFailureException;
@@ -45,12 +47,13 @@ import org.apache.maven.plugins.annotations.Parameter;
     defaultPhase = LifecyclePhase.VERIFY,
     requiresProject = false
 )
+@Setter
 public final class Messages extends AbstractMojo {
 
     /**
      * Git repository directory.
      */
-    @Parameter(defaultValue = "${project.basedir}/.git")
+    @Parameter(defaultValue = "${project.basedir}")
     private String directory;
 
     /**
@@ -109,15 +112,15 @@ public final class Messages extends AbstractMojo {
             return Runtime.getRuntime().exec(
                 new String[]{
                     "git",
-                    "--git-dir",
-                    this.directory,
                     "log",
                     "--abbrev-commit",
                     "--first-parent",
                     "--format=\"%s\"",
                     "--no-merges",
                     String.format("%s..HEAD", this.remote)
-                }
+                },
+                null,
+                new File(this.directory)
             );
         }
 
