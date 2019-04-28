@@ -51,9 +51,8 @@ final class CommitMessagesProcess implements Supplier<Process> {
             new String[]{
                 "git",
                 "log",
-                "--abbrev-commit",
                 "--first-parent",
-                "--format=\"%s\"",
+                "--format=%s",
                 "--no-merges",
                 String.format("%s..HEAD", this.remote)
             },
