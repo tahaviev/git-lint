@@ -30,6 +30,15 @@
     <artifactId>git-lint-maven-plugin</artifactId>
     <version>0.1-SNAPSHOT</version>
     <packaging>maven-plugin</packaging>
+    <distributionManagement>
+        <repository>
+            <id>bintray-tahaviev-maven</id>
+            <name>tahaviev-maven</name>
+            <url>
+                https://api.bintray.com/maven/tahaviev/maven/git-lint-maven-plugin/;publish=1
+            </url>
+        </repository>
+    </distributionManagement>
     <dependencies>
         <dependency>
             <groupId>org.apache.maven</groupId>
