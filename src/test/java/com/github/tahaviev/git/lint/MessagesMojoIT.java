@@ -25,19 +25,15 @@ package com.github.tahaviev.git.lint;
 
 import java.io.File;
 import java.io.IOException;
-import java.nio.file.Files;
 import java.nio.file.Path;
-import java.util.Comparator;
-import java.util.stream.Stream;
-import lombok.SneakyThrows;
 import org.apache.maven.plugin.MojoFailureException;
 import org.hamcrest.MatcherAssert;
 import org.hamcrest.Matchers;
-import org.junit.jupiter.api.AfterAll;
 import org.junit.jupiter.api.Assertions;
-import org.junit.jupiter.api.BeforeAll;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
+import org.junit.jupiter.api.extension.Extension;
+import org.junit.jupiter.api.extension.RegisterExtension;
 import org.junit.jupiter.api.io.TempDir;
 
 /**
@@ -46,9 +42,12 @@ import org.junit.jupiter.api.io.TempDir;
 public final class MessagesMojoIT {
 
     /**
-     * Git directory.
+     * {@link GitCommitsExtension} extension.
      */
-    private static File directory;
+    @RegisterExtension
+    public static final Extension EXTENSION = new GitCommitsExtension(
+        new String[]{"#123", "#test"}
+    );
 
     /**
      * {@link MessagesMojo} instance to test.
@@ -56,90 +55,14 @@ public final class MessagesMojoIT {
     private MessagesMojo mojo;
 
     /**
-     * Creates {@link MessagesMojoIT#directory}.
-     */
-    @BeforeAll
-    @SneakyThrows
-    public static void setUpDirectory() {
-        MessagesMojoIT.directory = Files.createTempDirectory("junit").toFile();
-    }
-
-    /**
-     * Creates git commits.
-     */
-    @BeforeAll
-    @SneakyThrows
-    public static void setUpCommits() {
-        new Executions(
-            new String[][]{
-                {"git", "init"},
-                {"git", "config", "user.email", "\"user.email\""},
-                {"git", "config", "user.name", "\"user.name\""}
-            },
-            MessagesMojoIT.directory
-        )
-            .run();
-        final Path file = Files.createFile(
-            MessagesMojoIT.directory.toPath().resolve("test.txt")
-        );
-        new Executions(
-            new String[][]{
-                {"git", "add", file.getFileName().toString()},
-                {"git", "commit", "-m", "file"},
-                {"git", "checkout", "-b", "branch"}
-            },
-            MessagesMojoIT.directory
-        )
-            .run();
-        Files.write(file, "first".getBytes());
-        new Executions(
-            new String[][]{
-                {"git", "add", file.getFileName().toString()},
-                {"git", "commit", "-m", "#123"}
-            },
-            MessagesMojoIT.directory
-        )
-            .run();
-        Files.write(file, "second".getBytes());
-        new Executions(
-            new String[][]{
-                {"git", "add", file.getFileName().toString()},
-                {"git", "commit", "-m", "#test"}
-            },
-            MessagesMojoIT.directory
-        )
-            .run();
-    }
-
-    /**
-     * Deletes {@link MessagesMojoIT#directory}.
-     */
-    @AfterAll
-    @SneakyThrows
-    public static void tearDownDirectory() {
-        final boolean fail;
-        try (
-            Stream<Path> files = Files.walk(MessagesMojoIT.directory.toPath())
-        ) {
-            fail = !files
-                .sorted(Comparator.reverseOrder())
-                .map(Path::toFile)
-                .allMatch(File::delete);
-        }
-        if (fail) {
-            throw new IOException(
-                String.format("can't delete %s", MessagesMojoIT.directory)
-            );
-        }
-    }
-
-    /**
      * Creates {@link MessagesMojo} instance.
+     *
+     * @param directory git repository directory
      */
     @BeforeEach
-    public void setUpMojo() {
+    public void setUp(@GitCommitsExtension.Directory final File directory) {
         this.mojo = new MessagesMojo();
-        this.mojo.setDirectory(MessagesMojoIT.directory.toString());
+        this.mojo.setDirectory(directory);
         this.mojo.setRemote("master");
     }
 
@@ -181,7 +104,7 @@ public final class MessagesMojoIT {
      */
     @Test
     public void throwExceptionOnInvalidInput(@TempDir final Path temp) {
-        this.mojo.setDirectory(temp.resolve("nonexistent").toString());
+        this.mojo.setDirectory(temp.resolve("nonexistent").toFile());
         Assertions.assertThrows(
             IOException.class,
             this.mojo::execute
