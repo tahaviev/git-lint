@@ -37,7 +37,7 @@ final class CommitMessagesProcess implements Supplier<Process> {
     /**
      * Git repository directory.
      */
-    private final String directory;
+    private final File directory;
 
     /**
      * Remote branch name.
@@ -58,7 +58,7 @@ final class CommitMessagesProcess implements Supplier<Process> {
                 String.format("%s..HEAD", this.remote)
             },
             null,
-            new File(this.directory)
+            this.directory
         );
     }
 

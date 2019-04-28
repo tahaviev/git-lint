@@ -23,6 +23,7 @@
  */
 package com.github.tahaviev.git.lint;
 
+import java.io.File;
 import java.util.Collection;
 import lombok.Setter;
 import org.apache.maven.plugin.AbstractMojo;
@@ -46,7 +47,7 @@ public final class MessagesMojo extends AbstractMojo {
      * Git repository directory.
      */
     @Parameter(defaultValue = "${project.basedir}")
-    private String directory;
+    private File directory;
 
     /**
      * Commit message pattern.
