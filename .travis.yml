@@ -5,6 +5,8 @@ cache:
     - $HOME/.m2
 install: true
 script: mvn verify
+after_success:
+  - bash <(curl -s https://codecov.io/bash)
 before_deploy:
   - cp .travis.settings.xml $HOME/.m2/settings.xml
 deploy:
