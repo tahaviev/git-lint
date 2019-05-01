@@ -81,7 +81,6 @@
                 <version>3.0.0</version>
                 <executions>
                     <execution>
-                        <phase>verify</phase>
                         <goals>
                             <goal>check</goal>
                         </goals>
@@ -90,6 +89,11 @@
                             <includeTestSourceDirectory>
                                 true
                             </includeTestSourceDirectory>
+                            <sourceDirectories>
+                                <sourceDirectory>
+                                    ${project.build.sourceDirectory}
+                                </sourceDirectory>
+                            </sourceDirectories>
                         </configuration>
                     </execution>
                 </executions>
@@ -118,6 +122,16 @@
             <plugin>
                 <artifactId>maven-plugin-plugin</artifactId>
                 <version>3.6.0</version>
+                <executions>
+                    <execution>
+                        <goals>
+                            <goal>helpmojo</goal>
+                        </goals>
+                        <configuration>
+                            <helpPackageName>generated</helpPackageName>
+                        </configuration>
+                    </execution>
+                </executions>
                 <configuration>
                     <encoding>UTF-8</encoding>
                 </configuration>
@@ -127,7 +141,6 @@
                 <version>3.11.0</version>
                 <executions>
                     <execution>
-                        <phase>verify</phase>
                         <goals>
                             <goal>check</goal>
                             <goal>cpd-check</goal>
@@ -135,6 +148,11 @@
                     </execution>
                 </executions>
                 <configuration>
+                    <excludeRoots>
+                        <excludeRoot>
+                            ${project.build.directory}/generated-sources
+                        </excludeRoot>
+                    </excludeRoots>
                     <includeTests>true</includeTests>
                     <linkXRef>false</linkXRef>
                     <sourceEncoding>UTF-8</sourceEncoding>
@@ -161,17 +179,15 @@
                 <version>0.8.3</version>
                 <executions>
                     <execution>
-                        <id>prepare-agent</id>
-                        <goals>
-                            <goal>prepare-agent</goal>
-                        </goals>
-                    </execution>
-                    <execution>
-                        <id>check</id>
                         <goals>
                             <goal>check</goal>
+                            <goal>prepare-agent</goal>
+                            <goal>report</goal>
                         </goals>
                         <configuration>
+                            <excludes>
+                                <exclude>generated/**</exclude>
+                            </excludes>
                             <rules>
                                 <rule>
                                     <limits>
@@ -189,12 +205,6 @@
                                 </rule>
                             </rules>
                         </configuration>
-                    </execution>
-                    <execution>
-                        <id>report</id>
-                        <goals>
-                            <goal>report</goal>
-                        </goals>
                     </execution>
                 </executions>
             </plugin>
