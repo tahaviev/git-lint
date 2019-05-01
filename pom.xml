@@ -28,6 +28,7 @@
     <artifactId>git-lint-maven-plugin</artifactId>
     <version>0.1.1-SNAPSHOT</version>
     <packaging>maven-plugin</packaging>
+    <url>https://github.com/tahaviev/git-lint-maven-plugin</url>
     <scm>
         <connection>
             scm:git:git@github.com:tahaviev/git-lint-maven-plugin.git
@@ -170,8 +171,33 @@
                 </configuration>
             </plugin>
             <plugin>
+                <artifactId>maven-site-plugin</artifactId>
+                <version>3.7.1</version>
+                <configuration>
+                    <inputEncoding>UTF-8</inputEncoding>
+                    <skipDeploy>true</skipDeploy>
+                </configuration>
+            </plugin>
+            <plugin>
                 <artifactId>maven-surefire-plugin</artifactId>
                 <version>2.22.1</version>
+            </plugin>
+            <plugin>
+                <groupId>com.github.github</groupId>
+                <artifactId>site-maven-plugin</artifactId>
+                <version>0.12</version>
+                <executions>
+                    <execution>
+                        <phase>site-deploy</phase>
+                        <goals>
+                            <goal>site</goal>
+                        </goals>
+                        <configuration>
+                            <message>${project.version}</message>
+                            <server>github</server>
+                        </configuration>
+                    </execution>
+                </executions>
             </plugin>
             <plugin>
                 <groupId>org.jacoco</groupId>
@@ -182,7 +208,6 @@
                         <goals>
                             <goal>check</goal>
                             <goal>prepare-agent</goal>
-                            <goal>report</goal>
                         </goals>
                         <configuration>
                             <excludes>
@@ -210,4 +235,22 @@
             </plugin>
         </plugins>
     </build>
+    <reporting>
+        <plugins>
+            <plugin>
+                <artifactId>maven-plugin-plugin</artifactId>
+            </plugin>
+            <plugin>
+                <artifactId>maven-project-info-reports-plugin</artifactId>
+                <version>3.0.0</version>
+                <reportSets>
+                    <reportSet>
+                        <reports>
+                            <report>index</report>
+                        </reports>
+                    </reportSet>
+                </reportSets>
+            </plugin>
+        </plugins>
+    </reporting>
 </project>
