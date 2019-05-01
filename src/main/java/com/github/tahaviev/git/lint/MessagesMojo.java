@@ -33,7 +33,7 @@ import org.apache.maven.plugins.annotations.Mojo;
 import org.apache.maven.plugins.annotations.Parameter;
 
 /**
- * Commit messages lint mojo.
+ * Fail the build if there were any commit messages violations.
  */
 @Mojo(
     defaultPhase = LifecyclePhase.VERIFY,
@@ -51,23 +51,23 @@ public final class MessagesMojo extends AbstractMojo {
     private File directory;
 
     /**
+     * Parent branch where commit messages validation start.
+     */
+    @Parameter(defaultValue = "origin/master")
+    private String parent;
+
+    /**
      * Commit message pattern.
      */
     @Parameter(required = true)
     private String pattern;
-
-    /**
-     * Remote branch name.
-     */
-    @Parameter(defaultValue = "origin/master")
-    private String remote;
 
     @Override
     public void execute() throws MojoFailureException {
         final Collection<String> mismatches = new Mismatches(
             new LinesFromProcess(
                 new SucceedProcess(
-                    new CommitMessagesProcess(this.directory, this.remote)
+                    new CommitMessagesProcess(this.directory, this.parent)
                 )
             ),
             this.pattern

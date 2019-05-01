@@ -40,9 +40,9 @@ final class CommitMessagesProcess implements Supplier<Process> {
     private final File directory;
 
     /**
-     * Remote branch name.
+     * Parent branch where commit messages start.
      */
-    private final String remote;
+    private final String parent;
 
     @Override
     @SneakyThrows
@@ -54,7 +54,7 @@ final class CommitMessagesProcess implements Supplier<Process> {
                 "--first-parent",
                 "--format=%s",
                 "--no-merges",
-                String.format("%s..HEAD", this.remote)
+                String.format("%s..HEAD", this.parent)
             },
             null,
             this.directory

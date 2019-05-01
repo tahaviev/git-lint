@@ -63,7 +63,7 @@ public final class MessagesMojoIT {
     public void setUp(@GitCommitsExtension.Directory final File directory) {
         this.mojo = new MessagesMojo();
         this.mojo.setDirectory(directory);
-        this.mojo.setRemote("master");
+        this.mojo.setParent("master");
     }
 
     /**
