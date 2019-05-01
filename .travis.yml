@@ -4,14 +4,14 @@ cache:
   directories:
     - $HOME/.m2
 install: true
-script: mvn verify
+script: mvn verify jacoco:report
 after_success:
   - bash <(curl -s https://codecov.io/bash)
 before_deploy:
   - cp .travis.settings.xml $HOME/.m2/settings.xml
 deploy:
   provider: script
-  script: mvn deploy
+  script: mvn clean deploy site-deploy
   skip_cleanup: true
   on:
     tags: true

@@ -31,5 +31,9 @@
             <username>tahaviev</username>
             <password>${env.BINTRAY_API_KEY}</password>
         </server>
+        <server>
+            <id>github</id>
+            <password>${env.GITHUB_TOKEN_SITE_MAVEN_PLUGIN}</password>
+        </server>
     </servers>
 </settings>
