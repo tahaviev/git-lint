@@ -36,8 +36,9 @@ import org.apache.maven.plugins.annotations.Parameter;
  * Commit messages lint mojo.
  */
 @Mojo(
-    name = "messages",
     defaultPhase = LifecyclePhase.VERIFY,
+    inheritByDefault = false,
+    name = "messages",
     requiresProject = false
 )
 @Setter
