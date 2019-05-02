@@ -252,7 +252,7 @@
                     </reportSet>
                 </reportSets>
                 <configuration>
-                    <githubAPIServerId>github-readonly</githubAPIServerId>
+                    <githubAPIServerId>github-public-access</githubAPIServerId>
                 </configuration>
             </plugin>
             <plugin>

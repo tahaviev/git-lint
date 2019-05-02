@@ -36,7 +36,8 @@
             <password>${env.GITHUB_TOKEN_SITE_MAVEN_PLUGIN}</password>
         </server>
         <server>
-            <id>github-readonly</id>
+            <id>github-public-access</id>
+            <password>${env.GITHUB_TOKEN_PUBLIC_ACCESS}</password>
         </server>
     </servers>
 </settings>
