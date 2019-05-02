@@ -251,9 +251,6 @@
                         </reports>
                     </reportSet>
                 </reportSets>
-                <configuration>
-                    <githubAPIServerId>github-public-access</githubAPIServerId>
-                </configuration>
             </plugin>
             <plugin>
                 <artifactId>maven-plugin-plugin</artifactId>

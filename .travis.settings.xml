@@ -32,12 +32,13 @@
             <password>${env.BINTRAY_API_KEY}</password>
         </server>
         <server>
-            <id>github-pages</id>
-            <password>${env.GITHUB_TOKEN_SITE_MAVEN_PLUGIN}</password>
+            <id>github</id>
+            <username>tahaviev</username>
+            <password>${env.GITHUB_PASSWORD}</password>
         </server>
         <server>
-            <id>github-public-access</id>
-            <password>${env.GITHUB_TOKEN_PUBLIC_ACCESS}</password>
+            <id>github-pages</id>
+            <password>${env.GITHUB_TOKEN_SITE_MAVEN_PLUGIN}</password>
         </server>
     </servers>
 </settings>
