@@ -32,8 +32,11 @@
             <password>${env.BINTRAY_API_KEY}</password>
         </server>
         <server>
-            <id>github</id>
+            <id>github-pages</id>
             <password>${env.GITHUB_TOKEN_SITE_MAVEN_PLUGIN}</password>
+        </server>
+        <server>
+            <id>github-readonly</id>
         </server>
     </servers>
 </settings>
