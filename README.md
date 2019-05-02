@@ -6,9 +6,7 @@
 [![](https://codecov.io/gh/tahaviev/git-lint-maven-plugin/branch/master/graph/badge.svg)](https://codecov.io/gh/tahaviev/git-lint-maven-plugin)
 ## How to Release
 <pre>
-mvn clean release:clean release:prepare 
--Dtag=${releaseVersion} 
--DscmCommentPrefix="${TICKET_NUMBER} " 
--DreleaseVersion=${RELEASE_VERSION} 
--DdevelopmentVersion=${DEVELOPMENT_VERSION}
+mvn -B clean release:clean release:prepare
+-DreleaseVersion=${RELEASE_VERSION}
+-DscmCommentPrefix="#${TICKET_NUMBER} "
 </pre>
