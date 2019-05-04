@@ -47,6 +47,11 @@
                 https://api.bintray.com/maven/tahaviev/maven/git-lint-maven-plugin/;publish=1
             </url>
         </repository>
+        <site>
+            <url>
+                scm:git:https://github.com/tahaviev/git-lint-maven-plugin.git
+            </url>
+        </site>
     </distributionManagement>
     <dependencies>
         <dependency>
@@ -178,6 +183,27 @@
                 </configuration>
             </plugin>
             <plugin>
+                <artifactId>maven-scm-publish-plugin</artifactId>
+                <version>3.0.0</version>
+                <executions>
+                    <execution>
+                        <phase>site-deploy</phase>
+                        <goals>
+                            <goal>publish-scm</goal>
+                        </goals>
+                        <configuration>
+                            <checkinComment>${project.version}</checkinComment>
+                            <content>
+                                ${project.reporting.outputDirectory}
+                            </content>
+                            <scmBranch>gh-pages</scmBranch>
+                            <serverId>github</serverId>
+                            <siteOutputEncoding>UTF-8</siteOutputEncoding>
+                        </configuration>
+                    </execution>
+                </executions>
+            </plugin>
+            <plugin>
                 <artifactId>maven-site-plugin</artifactId>
                 <version>3.7.1</version>
                 <configuration>
@@ -188,23 +214,6 @@
             <plugin>
                 <artifactId>maven-surefire-plugin</artifactId>
                 <version>2.22.1</version>
-            </plugin>
-            <plugin>
-                <groupId>com.github.github</groupId>
-                <artifactId>site-maven-plugin</artifactId>
-                <version>0.12</version>
-                <executions>
-                    <execution>
-                        <phase>site-deploy</phase>
-                        <goals>
-                            <goal>site</goal>
-                        </goals>
-                        <configuration>
-                            <message>${project.version}</message>
-                            <server>github-pages</server>
-                        </configuration>
-                    </execution>
-                </executions>
             </plugin>
             <plugin>
                 <groupId>org.jacoco</groupId>

@@ -36,9 +36,5 @@
             <username>tahaviev</username>
             <password>${env.GITHUB_PASSWORD}</password>
         </server>
-        <server>
-            <id>github-pages</id>
-            <password>${env.GITHUB_TOKEN_SITE_MAVEN_PLUGIN}</password>
-        </server>
     </servers>
 </settings>
