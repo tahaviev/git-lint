@@ -28,6 +28,7 @@ package com.github.tahaviev.git.lint;
 import java.io.BufferedReader;
 import java.io.IOException;
 import java.io.InputStreamReader;
+import java.nio.charset.Charset;
 import java.util.function.Supplier;
 import java.util.stream.Collectors;
 import lombok.RequiredArgsConstructor;
@@ -53,7 +54,7 @@ public final class SucceedProcess implements Supplier<Process> {
             try (
                 BufferedReader reader = new BufferedReader(
                     new InputStreamReader(
-                        process.getErrorStream()
+                        process.getErrorStream(), Charset.defaultCharset()
                     )
                 )
             ) {
