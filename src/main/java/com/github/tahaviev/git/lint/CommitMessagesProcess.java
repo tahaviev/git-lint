@@ -34,7 +34,7 @@ import lombok.SneakyThrows;
  * Represents commit messages process.
  */
 @RequiredArgsConstructor
-final class CommitMessagesProcess implements Supplier<Process> {
+public final class CommitMessagesProcess implements Supplier<Process> {
 
     /**
      * Git repository directory.
@@ -53,7 +53,6 @@ final class CommitMessagesProcess implements Supplier<Process> {
             new String[]{
                 "git",
                 "log",
-                "--first-parent",
                 "--format=%s",
                 "--no-merges",
                 String.format("%s..HEAD", this.parent)
