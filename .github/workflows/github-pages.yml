@@ -10,6 +10,8 @@ jobs:
       - uses: actions/setup-java@v1.0.1
         with:
           java-version: 1.8
+      - run: git config user.email "bot@github.com"
+      - run: git config user.name "Github Actions"
       - run: mvn --settings .maven/settings.xml site-deploy
         env:
           GITHUB_PASSWORD: ${{secrets.GITHUB_PASSWORD}}
